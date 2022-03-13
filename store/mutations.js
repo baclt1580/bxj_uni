@@ -1,0 +1,20 @@
+export default {
+	setToken(state,token){
+		state.$token=token;
+	},
+	removeToken(state){
+		state.$token=null;
+	},
+	setUserInfo(state,userInfo){
+		state.$userInfo=userInfo;
+	},
+	removeUserInfo(state){
+		this.userInfo=null;
+	},
+	setExpiresIn(state,expiresIn){
+		this.$expiresIn=expiresIn
+	},
+	removeExpiresIn(state){
+		this.$expiresIn=null
+	}
+}
