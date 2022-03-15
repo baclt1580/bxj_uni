@@ -76,6 +76,17 @@
             }
             
         }
+        ,{
+            "path" : "pages/userbb/userbb",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "我的帮帮",
+                "enablePullDownRefresh": false,
+				"navigationBarTextStyle":"white",
+				"navigationBarBackgroundColor":"#06c2ad"
+            }
+            
+        }
     ],
 	"tabBar":{
 		"color":"#cdcdcd",

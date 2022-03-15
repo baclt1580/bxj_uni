@@ -8,3 +8,5 @@ export const getTasks=({
 		page
 	}
 })
+export const getReciverCount=()=>http.get("bangbang/count/recived")
+export const getPubCount=()=>http.get("bangbang/count/pub")

@@ -23,8 +23,7 @@
 		},
 		data() {
 			return {
-				bbItemInfos:null,
-				searchStr:""
+				bbItemInfos:null
 			}
 		},
 		methods: {

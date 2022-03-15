@@ -1,11 +1,29 @@
 <template>
 	<div class="bbHeader">
 		<u-search placeholder="任务标题或任务标签名" v-model="searchStr"></u-search>
-		<div class="toMyTask">我的</div>
+		<div class="toMyTask" @click="toUserbb">我的</div>
 	</div>
 </template>
 
 <script>
+	export default {
+		data() {
+			return {
+				searchStr: ""
+			}
+		},
+		methods:{
+			toUserbb(){
+				uni.navigateTo({
+					url:"../../../../userbb/userbb",
+					fail(e){
+						console.log(e)
+					}
+				})
+			}
+		}
+		
+	}
 </script>
 
 <style lang="scss">
