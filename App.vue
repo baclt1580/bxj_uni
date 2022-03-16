@@ -1,9 +1,10 @@
 <script>
 	import {initToken} from "@/util/utils.js"
 	export default {
-		onLaunch:function() {
-			
+		onLaunch:async function() {
 			initToken()
+			await this.$refreshUserInfo()
+			plus.navigator.closeSplashscreen()
 		},
 		onShow: function() {
 			

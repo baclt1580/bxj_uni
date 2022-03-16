@@ -31,7 +31,7 @@ export function initToken(){
 				uni.reLaunch({
 					url:"./pages/initCollege/initCollege",
 					complete(){
-						plus.navigator.closeSplashscreen()
+						
 					}
 				})
 			}else{
@@ -42,7 +42,6 @@ export function initToken(){
 						console.log(e)
 					},
 					complete(){
-						plus.navigator.closeSplashscreen()
 					}
 				})
 			}

@@ -14,11 +14,22 @@
 				<div class="title">已发布</div>
 			</div>
 		</div>
+		<div class="tabs">
+			<div class="tab pub active">
+				我发布的
+			</div>
+			<div class="tab sub">
+				我接受的
+			</div>
+		</div>
+		<bbList></bbList>
 	</view>
 </template>
 
 <script>
 	import {getReciverCount,getPubCount} from "@/common/bbApis/bbApis.js"
+	import list from "./components/list/list.vue";
+	
 	export default {
 		async created(){
 			this.reciverCount=(await getReciverCount()).count;
@@ -32,12 +43,19 @@
 		},
 		methods: {
 			
+		},
+		components:{
+			bbList:list
 		}
 	}
 </script>
 
 <style lang="scss">
 	.userbb{
+		display: flex;
+		flex-direction: column;
+		height: 100vh;
+		
 		.info{
 			height: 300rpx;
 			background-color: $mainColor;
@@ -64,7 +82,29 @@
 				}
 			}
 		}
-		
+		.tabs{
+			height:100rpx;
+			display: flex;
+			
+			background-color: $mainColor;
+			border-top: 1px solid rgba(#E1E1E1, .6);
+			.tab{
+				width:50%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				color: #7f8c8d;
+				&.active{
+					color:#fff;
+				}
+				&:first-child{
+					border-right: 1px solid rgba(#E1E1E1, .6);
+				}
+			}
+		}
+		.list{
+			flex-grow: 1;
+		}
 	}
 
 </style>

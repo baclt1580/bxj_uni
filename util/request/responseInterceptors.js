@@ -8,6 +8,8 @@ module.exports = (vm) => {
         return data.data || {}
     }, (response) => { 
 		const {statusCode,data}= response;
+		
+		
 		if(data?.message){
 			let message=typeof data.message=="string"?data.message:data.message[0];
 			uni.$u.toast(message)
