@@ -38,8 +38,8 @@
 							去第<input type="text" value="5" />页 <view style="margin-left: 20rpx;font-weight:bold">Go</view>
 						</div>
 						<div class="pageBtns">
-							<div class="pageBtn prePage" @click="dynamic.page--;_refreshReplys(dynamic)">上一页</div>
-							<div class="pageBtn nextPage" @click="dynamic.page++;_refreshReplys(dynamic)">下一页</div>
+							<div class="pageBtn prePage" @click="dynamic.page--;_refreshReplys(dynamic._id)">上一页</div>
+							<div class="pageBtn nextPage" @click="dynamic.page++;_refreshReplys(dynamic._id)">下一页</div>
 						</div>
 					</div>
 					<u-line></u-line>
@@ -60,27 +60,31 @@
 </template>
 
 <script>
+	/**
+	 * 待解决问题
+	 * 如果开始不足一页
+	 * 
+	 */
+	
 	import {createDynamic,getDynamic,createReply,getReply,getDynamicById} from "@/common/api.js";
+	//一页动态的数量
+	const pageSize=20;
+	//回复一页的数量
+	const commentPageSize=8;
 	export default {
 		name:"myDynamic",
 		props:["listHeight"],
 		async created(){
-			console.log("created")
-			this.loading=true;
-			let res=await getDynamic({
-				pageSize:8,
-				page:1
-			});
-			this.isShowLoading=false;
-			if(res?.length){
-				res.forEach(dynamic=>dynamic.page=1);
-				this.dynamics=res;
-				
-			}
+			uni.$on("initDynamic",this.init)
+			uni.$on("refreshReply",({id})=>{
+				this._refreshReplys(id)
+			})
+			await this.init();
+			
 		},
 		data() {
 			return {
-				dynamics:null,
+				dynamics:null,//在响应基础上挂载了page,表示当前评论的页数
 				isShowComment:false,
 				isShowLoading:true,
 				//本地记录用户对某个动态的评论,用于缓存内容
@@ -92,23 +96,31 @@
 				}
 			};
 		},
+		computed:{
+			currentPage(){
+				return Math.ceil(this.dynamics.length/pageSize);
+			}
+		},
 		methods:{
+			//下拉到底部加载更多
 			async loadingMore(){
+				//正在加载则中断
 				if(this.isShowLoading)return;
-				if(!this.dynamics.length||this.dynamics.length%8!=0) {
+				let {dynamics}=this;
+				//dynamic为0或者不为pageSize的倍数则代表动态已经取完
+				if(!dynamics.length||dynamics.length%pageSize!=0) {
 					this.isShowLoading=false;
 					return;
 				};
+				//开始加载
 				this.isShowLoading=true;
-				let {dynamics}=this;
-				let currentPage=Math.ceil(dynamics.length/8);
 				let newDynamics=await getDynamic({
-					pageSize:8,
-					page:currentPage+1
+					pageSize,
+					page:this.currentPage+1
 				});
-				this.isShowLoading=false;
-				newDynamics.forEach(dynamic=>dynamic.page=1)
+				newDynamics.forEach(this._initDynamic)
 				this.dynamics.push(...newDynamics)
+				this.isShowLoading=false;
 			},
 			async createReply(id){
 				uni.showLoading({
@@ -122,22 +134,17 @@
 					return false;
 				}
 				let newDynamic=await getDynamicById({id});
-				
+				//替换dynamic的replys,并设置页数为第一页
 				let dynamic=this.dynamics.find(item=>item._id==id);
-				
+				dynamic.page=1;
 				dynamic.replys=newDynamic.replys;
 				dynamic.replySum=newDynamic.replySum;
+				//清空当前动态的评论，隐藏评论框
 				this.comment[id].content="";
 				this.hideComment();
 				uni.$u.toast("评论成功");
 			},
-			async createDynamic(){
-				let res=await createDynamic({
-					content:this.str
-				})
-			},
 			clearComment(id){
-				console.log(id,this.comment[id].content)
 				return this.comment[id]&&(this.comment[id].content="")
 			},
 			hideComment(){
@@ -161,31 +168,55 @@
 					}
 				})
 			},
+			//显示全部评论内容
 			showAll(reply){
 				if(!reply.isShowAll){
 					this.$set(reply,"isShowAll",true)
 				}
 			},
-			async _refreshReplys(dynamic){
+			//目前用于评论翻页
+			async _refreshReplys(id){
+				let dynamic=this.dynamics.find(dynamic=>dynamic._id==id)
+				console.log(dynamic)
 				let {page,replySum,replys}=dynamic;
 				//一共的页数
-				let pageSum=Math.ceil(replySum);
+				let pageSum=Math.ceil(replySum/commentPageSize);
 				//如果超过总页数或为负数则page设置为1
 				if(page<1||page>pageSum) {
 					dynamic.page=1;
 					page=1;
 				}
+				uni.showLoading({
+					title:"正在加载"
+				})
 				dynamic.replys=await getReply({
 					id:dynamic._id,
-					pageSize:8,
+					pageSize:commentPageSize,
 					page
 				})
+				uni.hideLoading()
 			},
 			_formatContent(content){
 				if(content?.length>110){
 					return content.slice(0,100)+"..."
 				}
 				return content
+			}
+			//初始化动态，挂载page等
+			,_initDynamic(dynamic){
+				this.$set(dynamic,"page",1)
+			}
+			,async init(){
+				this.isShowLoading=true;
+				let res=await getDynamic({
+					pageSize,
+					page:1
+				});
+				this.isShowLoading=false;
+				if(res?.length){
+					res.forEach(this._initDynamic);
+					this.dynamics=res;
+				}
 			}
 		}
 	}

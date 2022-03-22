@@ -70,12 +70,12 @@
 		<u-popup :show="isShowCreateDynamic" mode="bottom" overlayOpacity=".3" duration="200" @close="hideCreateDynmaic" @open="showCreateDynamic" :customStyle="{position:'relative'}">
 			<div class="btns">
 				<u-button text="发布" color="#06c2ad" size="small" class="btn replyBtn" @click="createDynamic()"></u-button>
-				<u-button text="清空" color="#e74c3c" size="small" class="btn cleatBtn" @click="clearComment()"></u-button>
+				<u-button text="清空" color="#e74c3c" size="small" class="btn cleatBtn" @click="clearDynamicContent()"></u-button>
 			</div>
 			<u--textarea v-model="dynamicContent" placeholder="请输入内容" count :maxlength="500" focus></u--textarea>
 		</u-popup>
 		<div class="createDynamic" @click="showCreateDynamic">
-			<image src="../assets/createDynamic.png" mode="widthFix" class="icon"></image>
+			<image src="../assets/createDynamic.png" mode="widthFix" class="createIcon"></image>
 		</div>
 	</div>
 	
@@ -83,22 +83,15 @@
 
 <script>
 	import {createDynamic,getUserDynamics,getDynamic,createReply,getReply,getDynamicById} from "@/common/api.js";
+	const dynamicPageSize=20;
+	const replyPageSize=8;
 	export default {
 		name:"myDynamic",
 		props:["listHeight"],
 		async created(){
-			console.log("created")
 			this.isShowLoading=true;
-			let res=await getUserDynamics({
-				pageSize:8,
-				page:1
-			});
+			await this.init()
 			this.isShowLoading=false;
-			if(res?.length){
-				res.forEach(dynamic=>dynamic.page=1);
-				this.dynamics=res;
-				
-			}
 		},
 		data() {
 			return {
@@ -119,20 +112,18 @@
 		methods:{
 			async loadingMore(){
 				if(this.isShowLoading)return;
-				if(!this.dynamics.length||this.dynamics.length%8!=0) {
+				if(!this.dynamics.length||this.dynamics.length%dynamicPageSize!=0) {
 					this.isShowLoading=false;
 					return;
 				}
 				this.isShowLoading=true;
 				let {dynamics}=this;
-				let currentPage=Math.ceil(dynamics.length/8);
-				
 				let newDynamics=await getUserDynamics({
-					pageSize:8,
-					page:currentPage+1
+					pageSize:dynamicPageSize,
+					page:this.currentPage+1
 				});
 				
-				newDynamics.forEach(dynamic=>dynamic.page=1)
+				newDynamics.forEach(this._initDynamic)
 				this.dynamics.push(...newDynamics)
 				this.isShowLoading=false;
 			},
@@ -150,9 +141,10 @@
 				let newDynamic=await getDynamicById({id});
 				
 				let dynamic=this.dynamics.find(item=>item._id==id);
-				
+				dynamic.page=1;
 				dynamic.replys=newDynamic.replys;
 				dynamic.replySum=newDynamic.replySum;
+				uni.$emit("refreshReply",{id});
 				this.clearComment(id);
 				this.hideComment();
 				uni.$u.toast("评论成功");
@@ -165,15 +157,16 @@
 				let {_id}=await createDynamic({
 					content:this.dynamicContent
 				})
-				let newDynamic=await getDynamic({pageSize:8,page:1});
-				newDynamic.forEach(dynamic=>dynamic.page=1);
-				this.dynamics=newDynamic;
-				this.clearDynamic();
+				if(!!_id){
+					await this.init()
+					uni.$emit("initDynamic")
+				}
+				this.clearDynamicContent();
 				this.hideCreateDynmaic();
 				uni.hideLoading()
 				uni.$u.toast("发布成功");
 			},
-			clearDynamic(){
+			clearDynamicContent(){
 				return this.dynamicContent="";
 			},
 			clearComment(id){
@@ -240,11 +233,25 @@
 					return content.slice(0,100)+"..."
 				}
 				return content
+			},
+			_initDynamic(dynamic){
+				this.$set(dynamic,"page",1)
+			},
+			async init(){
+				let res=await getUserDynamics({
+					pageSize:dynamicPageSize,
+					page:1
+				});
+				if(res?.length){
+					res.forEach(this._initDynamic);
+					this.dynamics=res;
+				}
 			}
+			
 		},
 		computed:{
-			dynamicsPage(){
-				
+			currentPage(){
+				return Math.ceil(this.dynamics.length/pageSize);
 			}
 		}
 	}
