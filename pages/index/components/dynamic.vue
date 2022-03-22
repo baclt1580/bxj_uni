@@ -174,9 +174,10 @@
 					this.$set(reply,"isShowAll",true)
 				}
 			},
-			//目前用于评论翻页
+			//目前用于评论翻页和评论同步
 			async _refreshReplys(id){
 				let dynamic=this.dynamics.find(dynamic=>dynamic._id==id)
+				if(!dynamic)return;
 				console.log(dynamic)
 				let {page,replySum,replys}=dynamic;
 				//一共的页数

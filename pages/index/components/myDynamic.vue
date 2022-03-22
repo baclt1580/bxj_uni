@@ -38,8 +38,8 @@
 							去第<input type="text" value="5" />页 <view style="margin-left: 20rpx;font-weight:bold">Go</view>
 						</div>
 						<div class="pageBtns">
-							<div class="pageBtn prePage" @click="dynamic.page--;_refreshReplys(dynamic)">上一页</div>
-							<div class="pageBtn nextPage" @click="dynamic.page++;_refreshReplys(dynamic)">下一页</div>
+							<div class="pageBtn prePage" @click="dynamic.page--;_refreshReplys(dynamic._id)">上一页</div>
+							<div class="pageBtn nextPage" @click="dynamic.page++;_refreshReplys(dynamic._id)">下一页</div>
 						</div>
 					</div>
 					<u-line></u-line>
@@ -212,21 +212,27 @@
 					this.$set(reply,"isShowAll",true)
 				}
 			},
-			async _refreshReplys(dynamic){
+			async _refreshReplys(id){
+				let dynamic=this.dynamics.find(dynamic=>dynamic._id==id)
+				if(!dynamic)return;
+				console.log(dynamic)
 				let {page,replySum,replys}=dynamic;
 				//一共的页数
-				let pageSum=Math.ceil(replySum);
+				let pageSum=Math.ceil(replySum/commentPageSize);
 				//如果超过总页数或为负数则page设置为1
 				if(page<1||page>pageSum) {
 					dynamic.page=1;
 					page=1;
 				}
-				console.log(dynamic._id)
+				uni.showLoading({
+					title:"正在加载"
+				})
 				dynamic.replys=await getReply({
 					id:dynamic._id,
-					pageSize:8,
+					pageSize:commentPageSize,
 					page
 				})
+				uni.hideLoading()
 			},
 			_formatContent(content){
 				if(content?.length>110){
