@@ -32,7 +32,7 @@
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "首页推荐",
-                "enablePullDownRefresh": false,
+                "enablePullDownRefresh": true,
 				"navigationBarTextStyle":"white",
 				"navigationBarBackgroundColor":"#06c2ad"
             }

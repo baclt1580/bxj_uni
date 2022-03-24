@@ -2,9 +2,7 @@ import {getUserInfo} from "./api.js"
 export default {
     data() {
         return {
-			$config:{
-				commentPageSize:6
-			}
+			
         }
     },
 	methods:{

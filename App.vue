@@ -1,7 +1,9 @@
 <script>
 	import {initToken} from "@/util/utils.js"
+	import config from "@/common/config.js"
 	export default {
 		onLaunch:async function() {
+			this.$config=config;
 			initToken()
 			await this.$refreshUserInfo()
 			plus.navigator.closeSplashscreen()
