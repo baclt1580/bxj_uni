@@ -1,0 +1,103 @@
+<template>
+	<view class="createTask">
+		<u-form labelPosition="left" :model="formContent" :rules="rules" class="taskForm">
+			<u-from-item prop="content" ref="item1" class="item content">
+				<u--textarea v-model="formContent.content" maxlength="500" placeholder="请输入内容" class="content" count
+					border="bottom"></u--textarea>
+			</u-from-item>
+			<u-form-item label="悬赏金额" prop="money" labelWidth="auto" class="item money">
+				<u-input type="number" maxlength="3" v-model="formContent.money" color="#06c2ad">
+					<u--text text="元" slot="suffix" margin="0 3px 0 0" type="tips"></u--text>
+				</u-input>
+			</u-form-item>
+			<u-form-item label="标签(可选)" prop="tag" labelWidth="auto" class="item tag">
+				<u-input type="text" maxlength="10" v-model="formContent.tag" color="#06c2ad">
+				</u-input>
+			</u-form-item>
+			<u-form-item label="标题" prop="title" labelWidth="auto" class="item title">
+				<u-input type="text" maxlength="30" v-model="formContent.title" color="#06c2ad">
+				</u-input>
+			</u-form-item>
+			<u-form-item label="发布人" labelWidth="auto" class="item user">
+				<text style="font-size: 36rpx;">{{$store.state.$userInfo.userInfo.nickname}}</text>
+			</u-form-item>
+			<button type="primary" style="background-color: #06C2AD;" @click="createTask">提交</button>
+		</u-form>
+	</view>
+</template>
+
+<script>
+	import {
+		createTask
+	} from "@/common/bbApis/bbApis.js";
+	export default {
+		data() {
+			return {
+				formContent: {
+					content: "",
+					money: "",
+					tag: "",
+					title: ""
+				},
+				rules: {
+					"content":{
+						max:500,
+						required:true,
+						message:"最大长度500",
+						trigger: ['blur']
+					},
+				}
+			}
+		},
+		methods: {
+			async createTask() {
+				let res = await createTask(this.formContent);
+				console.log(res)
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+	.createTask {
+		width: 690rpx;
+		margin: 0 auto;
+		margin-top: 40rpx;
+
+		.taskForm {
+			.item {
+				margin-bottom: 30rpx;
+
+				&.content .content {
+					height: 300rpx;
+					border-bottom: 1px solid #D4D4D4;
+					line-height: 50rpx;
+				}
+
+				&.money {
+
+					width: 250rpx;
+					border-bottom: 1px solid #D4D4D4;
+				}
+
+				&.tag {
+					width: 500rpx;
+					border-bottom: 1px solid #D4D4D4;
+
+				}
+
+				&.title {
+					width: 500rpx;
+					border-bottom: 1px solid #D4D4D4;
+
+				}
+
+				&.user {
+					margin-bottom: 50rpx;
+				}
+			}
+
+		}
+
+	}
+</style>

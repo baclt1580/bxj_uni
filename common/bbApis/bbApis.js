@@ -13,3 +13,4 @@ export const getPubCount=()=>http.get("bangbang/count/pub")
 export const getUserTasks=({id,pageSize,page})=>http.get(`bangbang/user/${id}`,{
 	params:{pageSize,page}
 })
+export const createTask=({title,content,money,tag})=>http.post('bangbang',{title,content,money,tag});

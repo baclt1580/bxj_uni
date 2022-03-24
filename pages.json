@@ -87,6 +87,17 @@
             }
             
         }
+        ,{
+            "path" : "pages/createTask/createTask",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "发布任务",
+                "enablePullDownRefresh": false,
+				"navigationBarTextStyle":"white",
+				"navigationBarBackgroundColor":"#06c2ad"
+            }
+            
+        }
     ],
 	"tabBar":{
 		"color":"#cdcdcd",

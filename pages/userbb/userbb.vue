@@ -1,5 +1,8 @@
 <template>
 	<view class="userbb">
+		<navigator url="/pages/createTask/createTask" class="toCreate">
+			<u-icon name="file-text" color="#ffffff"></u-icon>发布任务
+		</navigator>
 		<div class="info">
 			<div class="infoItem">
 				<div class="value">
@@ -55,7 +58,14 @@
 		display: flex;
 		flex-direction: column;
 		height: 100vh;
-		
+		position: relative;
+		.toCreate{
+			position: absolute;
+			right:30rpx;
+			top:0;
+			display: flex;
+			color:#ffffff;
+		}
 		.info{
 			height: 300rpx;
 			background-color: $mainColor;
@@ -93,6 +103,7 @@
 				display: flex;
 				justify-content: center;
 				align-items: center;
+				text-align: center;
 				color: #7f8c8d;
 				&.active{
 					color:#fff;

@@ -93,6 +93,7 @@
 					width:100rpx;
 					font-size: 24rpx;
 					margin-left: 20rpx;
+					text-align: center;
 					border: 1rpx solid $mainColor;
 					padding: 5rpx 10rpx;
 					color: $mainColor;
@@ -114,7 +115,7 @@
 					background-color:$mainColor;
 				}
 				&.complete{
-					background-color:$mainColor;
+					background-color:#27ae60;
 				}
 			}
 		}
