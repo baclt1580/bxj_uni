@@ -25,23 +25,27 @@
 				我接受的
 			</div>
 		</div>
-		<bbList></bbList>
+		<bbList :listHeight="listHeight"></bbList>
 	</view>
 </template>
 
 <script>
 	import {getReciverCount,getPubCount} from "@/common/bbApis/bbApis.js"
 	import list from "./components/list/list.vue";
-	
+	import {getDomRect,getWindowHeight} from "@/util/utils.js";
 	export default {
 		async created(){
 			this.reciverCount=(await getReciverCount()).count;
 			this.pubCount=(await getPubCount()).count;
+			let {bottom}=await getDomRect(this,".tabs");
+			let windowHeight=await getWindowHeight();
+			this.listHeight=windowHeight-bottom;
 		},
 		data() {
 			return {
 				reciverCount:0,
 				pubCount:0,
+				listHeight:0
 			}
 		},
 		methods: {
@@ -59,6 +63,7 @@
 		flex-direction: column;
 		height: 100vh;
 		position: relative;
+		background-color: #f5f5f5;
 		.toCreate{
 			position: absolute;
 			right:30rpx;
@@ -67,7 +72,7 @@
 			color:#ffffff;
 		}
 		.info{
-			height: 300rpx;
+			min-height: 300rpx;
 			background-color: $mainColor;
 			display: flex;
 			justify-content: space-around;
@@ -93,7 +98,7 @@
 			}
 		}
 		.tabs{
-			height:100rpx;
+			min-height:100rpx;
 			display: flex;
 			
 			background-color: $mainColor;

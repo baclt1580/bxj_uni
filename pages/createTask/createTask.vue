@@ -5,6 +5,18 @@
 				<u--textarea v-model="formContent.content" maxlength="500" placeholder="请输入内容" class="content" count
 					border="bottom"></u--textarea>
 			</u-from-item>
+			<u-from-item class="item upload">
+				<u-upload
+						:fileList="fileList"
+						@afterRead="afterRead"
+						@delete="deletePic"
+						name="1"
+						multiple
+						:maxCount="5"
+						style="margin-top: 30rpx;"
+					></u-upload>
+			</u-from-item>
+			
 			<u-form-item label="悬赏金额" prop="money" labelWidth="auto" class="item money">
 				<u-input type="number" maxlength="3" v-model="formContent.money" color="#06c2ad">
 					<u--text text="元" slot="suffix" margin="0 3px 0 0" type="tips"></u--text>
@@ -30,6 +42,7 @@
 	import {
 		createTask
 	} from "@/common/bbApis/bbApis.js";
+	import {baseUrl} from "@/common/config.js"
 	export default {
 		data() {
 			return {
@@ -37,8 +50,10 @@
 					content: "",
 					money: "",
 					tag: "",
-					title: ""
+					title: "",
+					imgs:[]
 				},
+				fileList:[],
 				rules: {
 					"content":{
 						max:500,
@@ -51,8 +66,49 @@
 		},
 		methods: {
 			async createTask() {
-				let res = await createTask(this.formContent);
+				let obj=this.formContent;
+				obj.money=Number(obj.money)
+				let res = await createTask(obj);
 				console.log(res)
+			},
+			afterRead(res){
+				let urls=res.file.map(item=>({url:item.url,status:"uploading",message:"上传中"}));
+				this.fileList.push(...urls);
+				urls.forEach(async (item,index)=>{
+					try{
+						let res=await this.uploadImgs(item.url);
+						item.status="success";
+						item.message='';
+						this.fileList.splice(index,1,item);
+						this.formContent.imgs.push(res.data[0])
+					}catch(e){
+						console.log(e)
+					}
+				
+					
+				})
+			},
+			deletePic(res){
+				console.log(res)
+			},
+			uploadImgs(url){
+				return new Promise((_res,_rej)=>{
+					uni.uploadFile({
+						url:baseUrl+"/bangbang/task/img",
+						name:"files",
+						filePath:url,
+						header:{
+							Authorization: `Bearer ${this.$store.state.$token}`
+						},
+						success({data}){
+							_res(JSON.parse(data))
+						},
+						fail(err){
+							_rej(err)
+						}
+					})
+				})
+				
 			}
 		}
 	}

@@ -1,7 +1,7 @@
 <template>
-	<div class="list">
+	<scroll-view :scroll-y="true" :style="{height:listHeight+'px'}" class="list">
 		<bbItem :bbItemInfo="bbItemInfo" v-for="bbItemInfo in itemInfos"></bbItem>
-	</div>
+	</scroll-view>
 </template>
 
 <script>
@@ -14,6 +14,7 @@
 			console.log(res)
 			this.itemInfos=res;
 		},
+		props:["listHeight"],
 		data() {
 			return {
 				itemInfos:[]
@@ -28,7 +29,7 @@
 <style lang="scss">
 .list{
 	background-color: #f5f5f5;
-	padding:30rpx 0;
+	padding: 30rpx 0;
 	.bbItem{
 		margin:0 auto;
 		margin-bottom:20rpx;
