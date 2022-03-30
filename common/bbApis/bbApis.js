@@ -14,3 +14,4 @@ export const getUserTasks=({id,pageSize,page})=>http.get(`bangbang/user/${id}`,{
 	params:{pageSize,page}
 })
 export const createTask=({title,content,imgs,money,tag})=>http.post('bangbang',{title,content,imgs,money,tag});
+export const getRecivedTask=({pageSize,page})=>http.get('bangbang/task/recived',{params:{pageSize,page}});

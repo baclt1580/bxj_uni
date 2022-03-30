@@ -6,22 +6,33 @@
 
 <script>
 	import bbItem from "../bbItem/bbItem.vue";
-	import {getUserTasks} from '@/common/bbApis/bbApis.js'
+	import {getUserTasks,getRecivedTask} from '@/common/bbApis/bbApis.js'
 	export default{
 		async created(){
-			let id=this.$store.state.$userInfo._id;
-			let res=await getUserTasks({id,pageSize:10,page:1});
-			console.log(res)
-			this.itemInfos=res;
+			uni.$on("refreshbb",this._initData);
+			await this._initData()
 		},
-		props:["listHeight"],
+		props:["listHeight","activeTab"],
 		data() {
 			return {
 				itemInfos:[]
 			}
 		},
+		methods:{
+			async _initData(){
+				let id=this.$store.state.$userInfo._id;
+				let getTask=this.activeTab==1?getUserTasks:getRecivedTask;
+				let res=await getTask({id,pageSize:10,page:1});
+				this.itemInfos=res;
+			}
+		},
 		components:{
 			bbItem
+		},
+		watch:{
+			activeTab(v){
+				this._initData()
+			}
 		}
 	}
 </script>

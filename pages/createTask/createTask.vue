@@ -1,6 +1,6 @@
 <template>
 	<view class="createTask">
-		<u-form labelPosition="left" :model="formContent" :rules="rules" class="taskForm">
+		<u-form labelPosition="left" :model="formContent" :rules="rules" class="taskForm" ref="createForm">
 			<u-from-item prop="content" ref="item1" class="item content">
 				<u--textarea v-model="formContent.content" maxlength="500" placeholder="请输入内容" class="content" count
 					border="bottom"></u--textarea>
@@ -43,33 +43,89 @@
 		createTask
 	} from "@/common/bbApis/bbApis.js";
 	import {baseUrl} from "@/common/config.js"
+	import {delEmpty} from "@/util/utils.js"
 	export default {
 		data() {
 			return {
 				formContent: {
 					content: "",
-					money: "",
+					money: 0,
 					tag: "",
 					title: "",
 					imgs:[]
 				},
 				fileList:[],
-				rules: {
-					"content":{
-						max:500,
-						required:true,
-						message:"最大长度500",
-						trigger: ['blur']
-					},
-				}
+				rules:{}
 			}
 		},
 		methods: {
 			async createTask() {
+				
 				let obj=this.formContent;
 				obj.money=Number(obj.money)
+				obj=delEmpty(obj);
+				if(!obj.content||!obj.content.length){
+					uni.showToast({
+						title:"内容不能为空",
+						duration:1200,
+						icon:"error"
+					})
+					return;
+				}
+				if(obj.content.length>500){
+					uni.showToast({
+						title:"内容长度最大为500",
+						duration:1200,
+						icon:"error"
+					})
+					return;
+				}
+				if(!obj.money&&obj.money!=0){
+					console.log(obj.money)
+					uni.showToast({
+						title:"悬赏不能为空",
+						duration:1200,
+						icon:"error"
+					})
+					return;
+				}
+				if(obj.money<0||obj.money>999){
+					uni.showToast({
+						title:"悬赏金额为0-999",
+						duration:1200,
+						icon:"error"
+					})
+					return;
+				}
+				if(!obj.title){
+					uni.showToast({
+						title:"标题不能为空",
+						duration:1200,
+						icon:"error"
+					})
+					return;
+				}
+				if(obj.title.length>30){
+					uni.showToast({
+						title:"标题最大长度为30",
+						duration:1200,
+						icon:"error"
+					})
+					return;
+				}
 				let res = await createTask(obj);
-				console.log(res)
+				uni.$emit("refreshbb");
+				if(res){
+					uni.navigateBack({
+						complete(){
+							uni.showToast({
+								title:"发布成功",
+								duration:1200
+							})
+						}
+					})
+				}
+				
 			},
 			afterRead(res){
 				let urls=res.file.map(item=>({url:item.url,status:"uploading",message:"上传中"}));

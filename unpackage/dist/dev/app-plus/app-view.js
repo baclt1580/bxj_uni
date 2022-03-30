@@ -9499,12 +9499,34 @@ var render = function() {
         "div",
         { staticClass: _vm._$g(12, "sc"), attrs: { _i: 12 } },
         [
-          _c("div", { staticClass: _vm._$g(13, "sc"), attrs: { _i: 13 } }, [
-            _vm._v("我发布的")
-          ]),
-          _c("div", { staticClass: _vm._$g(14, "sc"), attrs: { _i: 14 } }, [
-            _vm._v("我接受的")
-          ])
+          _c(
+            "div",
+            {
+              staticClass: _vm._$g(13, "sc"),
+              class: _vm._$g(13, "c"),
+              attrs: { _i: 13 },
+              on: {
+                click: function($event) {
+                  return _vm.$handleViewEvent($event)
+                }
+              }
+            },
+            [_vm._v("我发布的")]
+          ),
+          _c(
+            "div",
+            {
+              staticClass: _vm._$g(14, "sc"),
+              class: _vm._$g(14, "c"),
+              attrs: { _i: 14 },
+              on: {
+                click: function($event) {
+                  return _vm.$handleViewEvent($event)
+                }
+              }
+            },
+            [_vm._v("我接受的")]
+          )
         ],
         1
       ),
@@ -9681,7 +9703,7 @@ __webpack_require__.r(__webpack_exports__);
 Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
 var _bbItem = _interopRequireDefault(__webpack_require__(/*! ../bbItem/bbItem.vue */ 278));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}var _default =
 {
-  props: ["listHeight"],
+  props: ["listHeight", "activeTab"],
   data: function data() {
     return {
       wxsProps: {} };
@@ -10149,7 +10171,7 @@ var render = function() {
     [
       _c(
         "u-form",
-        { staticClass: _vm._$g(1, "sc"), attrs: { _i: 1 } },
+        { ref: "createForm", staticClass: _vm._$g(1, "sc"), attrs: { _i: 1 } },
         [
           _c(
             "u-from-item",

@@ -18,14 +18,14 @@
 			</div>
 		</div>
 		<div class="tabs">
-			<div class="tab pub active">
+			<div class="tab pub " :class="{active:activeTab==1}" @click="activeTab=1">
 				我发布的
 			</div>
-			<div class="tab sub">
+			<div class="tab sub" :class="{active:activeTab==2}" @click="activeTab=2">
 				我接受的
 			</div>
 		</div>
-		<bbList :listHeight="listHeight"></bbList>
+		<bbList :listHeight="listHeight" :activeTab="activeTab"></bbList>
 	</view>
 </template>
 
@@ -43,6 +43,7 @@
 		},
 		data() {
 			return {
+				activeTab:1,
 				reciverCount:0,
 				pubCount:0,
 				listHeight:0

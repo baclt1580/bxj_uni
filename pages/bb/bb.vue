@@ -16,6 +16,7 @@
 	export default {
 		async created() {
 			await this.init()
+			uni.$on("refreshbb",this.init)
 		},
 		async onPullDownRefresh(){
 			await this.init()

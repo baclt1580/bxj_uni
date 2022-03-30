@@ -257,7 +257,7 @@
 		},
 		computed:{
 			currentPage(){
-				return Math.ceil(this.dynamics.length/pageSize);
+				return Math.ceil(this.dynamics.length/dynamicPageSize);
 			}
 		}
 	}
