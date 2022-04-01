@@ -4,6 +4,7 @@
 		<bbHeader></bbHeader>
 		<div class="bbList" v-if="bbItemInfos">
 			<bbItem :bbItemInfo="bbItemInfo" v-for="bbItemInfo in bbItemInfos" :key="bbItemInfo._id"></bbItem>
+			<u-loadmore status="loading" v-show="showLoading" style="padding-top:30rpx;padding-bottom:30rpx;"/>
 		</div>
 	</view>
 </template>
@@ -22,17 +23,35 @@
 			await this.init()
 			uni.stopPullDownRefresh()
 		},
+		async onReachBottom(){
+			if(this.bbItemInfos.length%8!=0||this.showLoading){
+				console.log("加载完了或正在加载")
+				return;
+			}
+			this.showLoading=true;
+			let res=await getTasks({
+				pageSize:8,
+				page:++this.page
+			})
+			this.showLoading=false;
+			this.bbItemInfos.push(...res)
+		},
 		data() {
 			return {
-				bbItemInfos:null
+				bbItemInfos:null,
+				page:1,
+				showLoading:false
 			}
 		},
 		methods: {
 			async init(){
+				this.showLoading=true;
 				let res=await getTasks({
 					pageSize:8,
 					page:1
 				})
+				console.log(res.length)
+				this.showLoading=false;
 				this.bbItemInfos=res;
 			}
 		},
@@ -47,7 +66,7 @@
 	.bb{
 		color:$fontColor;
 		background-color: #f5f5f5;
-		height: 100vh;
+		
 		padding-top:120rpx;
 		
 		.bbList{

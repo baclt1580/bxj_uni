@@ -8343,6 +8343,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
 var components
+try {
+  components = {
+    uLoadmore: __webpack_require__(/*! @/uni_modules/uview-ui/components/u-loadmore/u-loadmore.vue */ 136)
+      .default
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
+}
 var render = function() {
   var _vm = this
   var _h = _vm.$createElement
@@ -8356,13 +8378,30 @@ var render = function() {
         ? _c(
             "div",
             { staticClass: _vm._$g(2, "sc"), attrs: { _i: 2 } },
-            _vm._l(_vm._$g(3, "f"), function(bbItemInfo, $10, $20, $30) {
-              return _c("bbItem", {
-                key: bbItemInfo,
-                attrs: { _i: "3-" + $30 }
+            [
+              _vm._l(_vm._$g(3, "f"), function(bbItemInfo, $10, $20, $30) {
+                return _c("bbItem", {
+                  key: bbItemInfo,
+                  attrs: { _i: "3-" + $30 }
+                })
+              }),
+              _c("u-loadmore", {
+                directives: [
+                  {
+                    name: "show",
+                    rawName: "v-show",
+                    value: _vm._$g(4, "v-show"),
+                    expression: "_$g(4,'v-show')"
+                  }
+                ],
+                staticStyle: {
+                  "padding-top": "30rpx",
+                  "padding-bottom": "30rpx"
+                },
+                attrs: { _i: 4 }
               })
-            }),
-            1
+            ],
+            2
           )
         : _vm._e()
     ],
@@ -9201,7 +9240,7 @@ if(false) {}
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ./node_modules/css-loader/dist/runtime/api.js */ 22);
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, "@charset \"UTF-8\";\r\n/**\r\n * 下方引入的为uView UI的集成样式文件，为scss预处理器，其中包含了一些\"u-\"开头的自定义变量\r\n * 使用的时候，请将下面的一行复制到您的uniapp项目根目录的uni.scss中即可\r\n * uView自定义的css类名和scss变量，均以\"u-\"开头，不会造成冲突，请放心使用 \r\n */\n.bb[data-v-340d4ed4] {\r\n  color: #626675;\r\n  background-color: #f5f5f5;\r\n  height: 100vh;\r\n  padding-top: 120rpx;\n}\n.bb .bbList .bbItem[data-v-340d4ed4] {\r\n  margin: 0 auto;\r\n  margin-top: 20rpx;\n}\r\n", ""]);
+exports.push([module.i, "@charset \"UTF-8\";\r\n/**\r\n * 下方引入的为uView UI的集成样式文件，为scss预处理器，其中包含了一些\"u-\"开头的自定义变量\r\n * 使用的时候，请将下面的一行复制到您的uniapp项目根目录的uni.scss中即可\r\n * uView自定义的css类名和scss变量，均以\"u-\"开头，不会造成冲突，请放心使用 \r\n */\n.bb[data-v-340d4ed4] {\r\n  color: #626675;\r\n  background-color: #f5f5f5;\r\n  padding-top: 120rpx;\n}\n.bb .bbList .bbItem[data-v-340d4ed4] {\r\n  margin: 0 auto;\r\n  margin-top: 20rpx;\n}\r\n", ""]);
 // Exports
 module.exports = exports;
 
