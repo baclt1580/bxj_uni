@@ -10,7 +10,7 @@ export default {
 	},
 	setUserInfo({commit},userInfo){
 		uni.setStorageSync("userInfo",userInfo)
-		console.log(uni.getStorageSync("userInfo"))
+		uni.$emit("refreshUserInfo",userInfo)
 		commit("setUserInfo",userInfo)
 	},
 	setExpiresIn({commit},expiresIn){

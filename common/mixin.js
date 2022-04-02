@@ -10,6 +10,7 @@ export default {
 			let userInfo=await getUserInfo();
 			if(!!userInfo){
 				this.$store.dispatch("setUserInfo",userInfo)
+				
 			}
 		}
 	}

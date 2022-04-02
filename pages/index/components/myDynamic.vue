@@ -2,6 +2,7 @@
 	<div class="dynamic">
 		<scroll-view class="dynamicList" :style="{height:listHeight}" scroll-y @scrolltolower="loadingMore">
 				<div class="dynamicItem" v-for="dynamic in dynamics" :key="dynamic._id">
+					<!-- 用户信息 -->
 					<div class="info">
 						<div class="infoLeft">
 							<div class="avatar">
@@ -14,22 +15,32 @@
 						</div>
 						
 					</div>
-					
+					<!-- 内容 -->
 					<div class="content">
 						<u-read-more closeText="展开" :shadowStyle="{backgroundImage: 'none',paddingTop: '0',marginTop: '20rpx'}" textIndent="0" color="#06c2ad">
 						{{dynamic.content}}
 						</u-read-more>
 					</div>
+					<!-- 菜单 -->
 					<div class="menus">
 						<image src="../assets/comment.png" mode="widthFix" style="width: 50rpx;" @click="showComment(dynamic._id)"></image>
 					</div>
+					<!-- 评论 -->
 					<div class="comments">
 						<div class="commentItem" v-for="(reply,index) in dynamic.replys" :key="reply._id">
-							<text class="username">{{reply.user.userInfo.nickname}}:</text>{{reply.isShowAll?reply.content:_formatContent(reply.content)}}
+							<text class="username">{{reply.user.userInfo.nickname}}:</text>
+							<text v-if="reply.isShowAll">
+								{{reply.content}}
+							</text>
+							<text>
+								{{reply.content|sliceContent}}
+							</text>
+							
 							<text v-if="reply.content.length>110&&!reply.isShowAll" style="color:#09f;" @click="showAll(reply)">展开</text>
 							<text v-if="reply.content.length>110&&reply.isShowAll" style="color:#09f;" @click="reply.isShowAll=false">折叠</text>
 						</div>
 					</div>
+					<!-- 评论分页器 -->
 					<div class="commentPages" v-if="dynamic.replySum>8">
 						<div class="currentInfo">
 							{{dynamic.page}}/{{Math.ceil(dynamic.replySum/8)}}
@@ -47,34 +58,18 @@
 				<u-loadmore status="loading" v-show="isShowLoading"/>
 		</scroll-view>
 		
-		<u-empty
-		        icon="http://tiebapic.baidu.com/forum/w%3D580/sign=a93a8e570fed2e73fce98624b700a16d/53a4ca43ad4bd113ecb0d6e11fafa40f4afb0591.jpg"
-				v-if="dynamics&&!dynamics.length"
-				width="80"
-				height="80"
-				style="margin-top: 100rpx;"
-				text="没有动态"
-		>
-		
-		</u-empty>
-		
-		<!-- 评论 -->
+		<!-- 非文档流 -->
+		<u-empty mode="list" v-if="dynamics&&!dynamics.length" width="80" height="80" style="margin-top: 100rpx;" text="没有动态"></u-empty>
+		<!-- 创建评论 -->
 		<u-popup :show="isShowComment" mode="bottom" overlayOpacity=".3" duration="200" @close="hideComment" @open="showComment" :customStyle="{position:'relative'}">
 			<div class="btns">
 				<u-button text="回复" color="#06c2ad" size="small" class="btn replyBtn" @click="createReply(comment.currentId)"></u-button>
-				<u-button text="清空" color="#e74c3c" size="small" class="btn cleatBtn" @click="clearComment(comment.currentId)"></u-button>
+				<u-button text="清空" color="#e74c3c" size="small" class="btn cleatBtn" @click="clearCommentContent(comment.currentId)"></u-button>
 			</div>
 			<u--textarea v-model="comment[comment.currentId].content" placeholder="请输入内容" count :maxlength="500" focus></u--textarea>
 		</u-popup>
-		<!-- 动态 -->
-		<u-popup :show="isShowCreateDynamic" mode="bottom" overlayOpacity=".3" duration="200" @close="hideCreateDynmaic" @open="showCreateDynamic" :customStyle="{position:'relative'}">
-			<div class="btns">
-				<u-button text="发布" color="#06c2ad" size="small" class="btn replyBtn" @click="createDynamic()"></u-button>
-				<u-button text="清空" color="#e74c3c" size="small" class="btn cleatBtn" @click="clearDynamicContent()"></u-button>
-			</div>
-			<u--textarea v-model="dynamicContent" placeholder="请输入内容" count :maxlength="500" focus></u--textarea>
-		</u-popup>
-		<div class="createDynamic" @click="showCreateDynamic">
+		<!-- 创建动态按钮 -->
+		<div class="createDynamic" >
 			<image src="../assets/createDynamic.png" mode="widthFix" class="createIcon"></image>
 		</div>
 	</div>
@@ -85,21 +80,22 @@
 	import {createDynamic,getUserDynamics,getDynamic,createReply,getReply,getDynamicById} from "@/common/api.js";
 	const dynamicPageSize=20;
 	const replyPageSize=8;
+	const commentPageSize=8;
 	export default {
-		name:"myDynamic",
-		props:["listHeight"],
+		name:"dynamic",
+		props:["listHeight","activeTab"],
 		async created(){
 			this.isShowLoading=true;
-			await this.init()
+			await this._initData()
 			this.isShowLoading=false;
+			this.$on("refreshReply",this._refreshReplys)
+			this.$on("refreshDynamic",this._initData)
 		},
 		data() {
 			return {
-				dynamics:null,
-				isShowComment:false,
-				isShowCreateDynamic:false,
-				isShowLoading:true,
-				dynamicContent:"",
+				dynamics:null,  //动态
+				isShowComment:false, //是否正在显示创建评论框
+				isShowLoading:true, 
 				//本地记录用户对某个动态的评论,用于缓存内容
 				comment:{
 					currentId:"_id",
@@ -109,16 +105,22 @@
 				}
 			};
 		},
+		computed:{
+			currentPage(){
+				return Math.ceil(this.dynamics.length/dynamicPageSize);
+			}
+		},
 		methods:{
 			async loadingMore(){
 				if(this.isShowLoading)return;
 				if(!this.dynamics.length||this.dynamics.length%dynamicPageSize!=0) {
+					console.log("已加载完")
 					this.isShowLoading=false;
 					return;
 				}
 				this.isShowLoading=true;
 				let {dynamics}=this;
-				let newDynamics=await getUserDynamics({
+				let newDynamics=await this._getDynamics({
 					pageSize:dynamicPageSize,
 					page:this.currentPage+1
 				});
@@ -138,53 +140,13 @@
 					uni.$u.toast("评论失败");
 					return false;
 				}
-				let newDynamic=await getDynamicById({id});
-				
-				let dynamic=this.dynamics.find(item=>item._id==id);
-				dynamic.page=1;
-				dynamic.replys=newDynamic.replys;
-				dynamic.replySum=newDynamic.replySum;
 				uni.$emit("refreshReply",{id});
-				this.clearComment(id);
+				this.clearCommentContent(id);
 				this.hideComment();
 				uni.$u.toast("评论成功");
 			},
-			async createDynamic(){
-				if(!this.dynamicContent?.length)return;
-				uni.showLoading({
-					title:"正在提交"
-				})
-				let {_id}=await createDynamic({
-					content:this.dynamicContent
-				})
-				if(!!_id){
-					await this.init()
-					uni.$emit("initDynamic")
-				}
-				this.clearDynamicContent();
-				this.hideCreateDynmaic();
-				uni.hideLoading()
-				uni.$u.toast("发布成功");
-			},
-			clearDynamicContent(){
-				return this.dynamicContent="";
-			},
-			clearComment(id){
+			clearCommentContent(id){
 				return this.comment[id]&&(this.comment[id].content="")
-			},
-			hideCreateDynmaic(){
-				uni.showTabBar({
-					success:()=>{
-						this.isShowCreateDynamic=false;
-					}
-				})
-			},
-			showCreateDynamic(){
-				uni.hideTabBar({
-					success:()=>{
-						this.isShowCreateDynamic=true;
-					}
-				})
 			},
 			hideComment(){
 				this.comment.currentId="_id";
@@ -207,15 +169,20 @@
 					}
 				})
 			},
+			//显示评论全部内容
 			showAll(reply){
 				if(!reply.isShowAll){
 					this.$set(reply,"isShowAll",true)
 				}
 			},
+			//刷新某个动态的评论
 			async _refreshReplys(id){
+				console.log("刷新评论")
 				let dynamic=this.dynamics.find(dynamic=>dynamic._id==id)
-				if(!dynamic)return;
-				console.log(dynamic)
+				if(!dynamic){
+					console.log("没找到该动态")
+					return;
+				};
 				let {page,replySum,replys}=dynamic;
 				//一共的页数
 				let pageSum=Math.ceil(replySum/commentPageSize);
@@ -234,33 +201,44 @@
 				})
 				uni.hideLoading()
 			},
-			_formatContent(content){
+			//初始化动态列表
+			async _initData(){
+				let res=await this._getDynamics({
+					pageSize:dynamicPageSize,
+					page:1
+				});
+				res.forEach(this._initDynamic);
+				this.dynamics=res;
+			},
+			// 初始化dynamic,从请求获取到的dynamic对象需要初始化以附加page属性来标识当前评论页数
+			_initDynamic(dynamic){
+				this.$set(dynamic,"page",1)
+			},
+			_getDynamics(...params){
+				
+				return this.activeTab==1?getDynamic(...params):getUserDynamics(...params);
+				
+			}
+		},
+		filters: {
+			sliceContent(content){
 				if(content?.length>110){
 					return content.slice(0,100)+"..."
 				}
 				return content
 			},
-			_initDynamic(dynamic){
-				this.$set(dynamic,"page",1)
-			},
-			async init(){
-				let res=await getUserDynamics({
-					pageSize:dynamicPageSize,
-					page:1
-				});
-				if(res?.length){
-					res.forEach(this._initDynamic);
-					this.dynamics=res;
-				}
-			}
-			
 		},
-		computed:{
-			currentPage(){
-				return Math.ceil(this.dynamics.length/dynamicPageSize);
+		watch: {
+			async activeTab(newValue, oldValue) {
+				uni.showLoading({
+					title:"正在加载"
+				})
+				await this._initData()
+				uni.hideLoading()
 			}
-		}
+		},
 	}
+	
 </script>
 
 <style lang="scss" scoped>
@@ -374,7 +352,7 @@
 			border-radius: 50%;
 			position: fixed;
 			right: 30rpx;
-			bottom:30rpx;
+			bottom:200rpx;
 			display: flex;
 			justify-content: center;
 			align-items: center;

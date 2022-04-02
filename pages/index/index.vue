@@ -13,17 +13,15 @@
 			</swiper-item>
 		</swiper>
 		<div class="switchTab">
-			<div class="tabItem" :class="{active:currentComponent=='dynamic'}" @click="currentComponent='dynamic'">本校</div>
-			<div class="tabItem" :class="{active:currentComponent=='myDynamic'}" @click="toMynamic">我的</div>
+			<div class="tabItem" :class="{active:activeTab==1}" @click="activeTab=1">本校</div>
+			<div class="tabItem" :class="{active:activeTab==2}" @click="activeTab=2">我的</div>
 		</div>
-		<dynamic v-show="currentComponent=='dynamic'"  :listHeight="listHeight"></dynamic>
-		<myDynamic v-show="currentComponent=='myDynamic'" v-if="showedMyDynamic" :listHeight="listHeight"></myDynamic>
-			
+		<myDynamic :listHeight="listHeight" :activeTab="activeTab"></myDynamic>
 	</view>
 </template>
 
 <script>
-	import dynamic from "./components/dynamic.vue"
+	
 	import myDynamic from "./components/myDynamic.vue"
 	import {getDomRect,getWindowHeight} from "@/util/utils.js"
 	export default {
@@ -35,19 +33,13 @@
 		data() {
 			return {
 				listHeight: null,
-				currentComponent:"dynamic",
-				showedMyDynamic:false
+				activeTab:1
 			}
 		},
 		methods:{
-			toMynamic(){
-				//上来就渲染myDynamic的话因为v-show为false会导致readMore样式错误
-				this.showedMyDynamic=true;
-				this.currentComponent='myDynamic';
-			}
+			
 		},
 		components:{
-			dynamic,
 			myDynamic
 		}
 		
