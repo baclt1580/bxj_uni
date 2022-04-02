@@ -1,6 +1,11 @@
 <template>
 	<scroll-view :scroll-y="true" :style="{height:listHeight+'px'}" class="list">
 		<bbItem :bbItemInfo="bbItemInfo" v-for="bbItemInfo in itemInfos"></bbItem>
+		<u-empty
+				v-if="!itemInfos.length",
+				mode="list"
+		>
+		</u-empty>
 	</scroll-view>
 </template>
 
@@ -22,7 +27,11 @@
 			async _initData(){
 				let id=this.$store.state.$userInfo._id;
 				let getTask=this.activeTab==1?getUserTasks:getRecivedTask;
+				uni.showLoading({
+					title:"正在加载"
+				})
 				let res=await getTask({id,pageSize:10,page:1});
+				uni.hideLoading()
 				this.itemInfos=res;
 			}
 		},
