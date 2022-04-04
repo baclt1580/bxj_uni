@@ -98,6 +98,17 @@
             }
             
         }
+        ,{
+            "path" : "pages/createDynamic/createDynamic",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "发布动态",
+                "enablePullDownRefresh": false,
+				"navigationBarTextStyle":"white",
+				"navigationBarBackgroundColor":"#06c2ad"
+            }
+            
+        }
     ],
 	"tabBar":{
 		"color":"#cdcdcd",
