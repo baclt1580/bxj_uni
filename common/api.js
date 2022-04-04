@@ -20,8 +20,8 @@ export const getCollages=({keywords})=>http.get("user/colleges",{
 export const changeCollege=({collegeName})=>http.put("user/college",{
 	collegeName
 })
-export const createDynamic=({content})=>http.post("dynamic",{
-	content
+export const createDynamic=({content,images})=>http.post("dynamic",{
+	content,images
 })
 export const getDynamic=({pageSize,page})=>http.get("dynamic",{params:{pageSize,page}})
 export const getDynamicById=({id})=>http.get(`dynamic/${id}`)

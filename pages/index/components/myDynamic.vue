@@ -20,6 +20,7 @@
 						<u-read-more closeText="展开" :shadowStyle="{backgroundImage: 'none',paddingTop: '0',marginTop: '20rpx'}" textIndent="0" color="#06c2ad">
 						{{dynamic.content}}
 						</u-read-more>
+						<image :src="_img(img)" mode="widthFix" v-for="img in dynamic.images" :key="img" style="width:200rpx"></image>
 					</div>
 					<!-- 菜单 -->
 					<div class="menus">
@@ -69,9 +70,9 @@
 			<u--textarea v-model="comment[comment.currentId].content" placeholder="请输入内容" count :maxlength="500" focus></u--textarea>
 		</u-popup>
 		<!-- 创建动态按钮 -->
-		<div class="createDynamic" >
+		<navigator url="/pages/createDynamic/createDynamic" class="createDynamic" >
 			<image src="../assets/createDynamic.png" mode="widthFix" class="createIcon"></image>
-		</div>
+		</navigator>
 	</div>
 	
 </template>
@@ -88,8 +89,11 @@
 			this.isShowLoading=true;
 			await this._initData()
 			this.isShowLoading=false;
-			this.$on("refreshReply",this._refreshReplys)
-			this.$on("refreshDynamic",this._initData)
+			uni.$on("refreshReply",(id)=>{
+				
+				this._refreshReplys(id)
+			})
+			uni.$on("refreshDynamic",this._initData)
 		},
 		data() {
 			return {
@@ -140,7 +144,7 @@
 					uni.$u.toast("评论失败");
 					return false;
 				}
-				uni.$emit("refreshReply",{id});
+				uni.$emit("refreshReply",id);
 				this.clearCommentContent(id);
 				this.hideComment();
 				uni.$u.toast("评论成功");
@@ -177,7 +181,7 @@
 			},
 			//刷新某个动态的评论
 			async _refreshReplys(id){
-				console.log("刷新评论")
+				console.log("刷新评论",id)
 				let dynamic=this.dynamics.find(dynamic=>dynamic._id==id)
 				if(!dynamic){
 					console.log("没找到该动态")
@@ -203,10 +207,16 @@
 			},
 			//初始化动态列表
 			async _initData(){
+				console.log("initData")
+				uni.showLoading({
+					title:'正在加载'
+				})
 				let res=await this._getDynamics({
 					pageSize:dynamicPageSize,
 					page:1
 				});
+				
+				uni.hideLoading()
 				res.forEach(this._initDynamic);
 				this.dynamics=res;
 			},
@@ -218,6 +228,9 @@
 				
 				return this.activeTab==1?getDynamic(...params):getUserDynamics(...params);
 				
+			},
+			_img(str){
+				return "http://192.168.0.149:3000/"+str.split("/").slice(-3).join("/")
 			}
 		},
 		filters: {
@@ -227,6 +240,9 @@
 				}
 				return content
 			},
+			img(str){
+				
+			}
 		},
 		watch: {
 			async activeTab(newValue, oldValue) {

@@ -1,5 +1,5 @@
 <template>
-	<view class="createTask">
+	<view class="createDynamic">
 		<u-form labelPosition="left" :model="formContent" :rules="rules" class="taskForm" ref="createForm">
 			<u-from-item prop="content" ref="item1" class="item content">
 				<u--textarea v-model="formContent.content" maxlength="500" placeholder="请输入内容" class="content" count
@@ -17,31 +17,17 @@
 					></u-upload>
 			</u-from-item>
 			
-			<u-form-item label="悬赏金额" prop="money" labelWidth="auto" class="item money">
-				<u-input type="number" maxlength="3" v-model="formContent.money" color="#06c2ad">
-					<u--text text="元" slot="suffix" margin="0 3px 0 0" type="tips"></u--text>
-				</u-input>
-			</u-form-item>
-			<u-form-item label="标签(可选)" prop="tag" labelWidth="auto" class="item tag">
-				<u-input type="text" maxlength="10" v-model="formContent.tag" color="#06c2ad">
-				</u-input>
-			</u-form-item>
-			<u-form-item label="标题" prop="title" labelWidth="auto" class="item title">
-				<u-input type="text" maxlength="30" v-model="formContent.title" color="#06c2ad">
-				</u-input>
-			</u-form-item>
-			<u-form-item label="发布人" labelWidth="auto" class="item user">
-				<text style="font-size: 36rpx;">{{$store.state.$userInfo.userInfo.nickname}}</text>
-			</u-form-item>
-			<button type="primary" style="background-color: #06C2AD;" @click="createTask">提交</button>
+			
+			
+			<button type="primary" style="background-color: #06C2AD;" @click="createDynamic">发布</button>
 		</u-form>
 	</view>
 </template>
 
 <script>
 	import {
-		createTask
-	} from "@/common/bbApis/bbApis.js";
+		createDynamic
+	} from "@/common/api.js";
 	import {baseUrl} from "@/common/config.js"
 	import {delEmpty} from "@/util/utils.js"
 	export default {
@@ -49,22 +35,17 @@
 			return {
 				formContent: {
 					content: "",
-					money: 0,
-					tag: "",
-					title: "",
-					imgs:[]
+					images:[]
 				},
 				fileList:[],
 				rules:{}
 			}
 		},
 		methods: {
-			async createTask() {
+			async createDynamic() {
 				
 				let obj=this.formContent;
-				obj.money=Number(obj.money)
-				obj.imgs=this.fileList.map((item)=>item.url_)
-				obj=delEmpty(obj);
+				obj.images=this.fileList.map(item=>item.url_)
 				if(!obj.content||!obj.content.length){
 					uni.showToast({
 						title:"内容不能为空",
@@ -81,48 +62,18 @@
 					})
 					return;
 				}
-				if(!obj.money&&obj.money!=0){
-					console.log(obj.money)
-					uni.showToast({
-						title:"悬赏不能为空",
-						duration:1200,
-						icon:"error"
-					})
-					return;
-				}
-				if(obj.money<0||obj.money>999){
-					uni.showToast({
-						title:"悬赏金额为0-999",
-						duration:1200,
-						icon:"error"
-					})
-					return;
-				}
-				if(!obj.title){
-					uni.showToast({
-						title:"标题不能为空",
-						duration:1200,
-						icon:"error"
-					})
-					return;
-				}
-				if(obj.title.length>30){
-					uni.showToast({
-						title:"标题最大长度为30",
-						duration:1200,
-						icon:"error"
-					})
-					return;
-				}
-				let res = await createTask(obj);
-				uni.$emit("refreshbb");
+				console.log(obj)
+				let res = await createDynamic(obj);
+				
 				if(res){
 					uni.navigateBack({
 						complete(){
+							
 							uni.showToast({
 								title:"发布成功",
-								duration:1200
+								duration:500
 							})
+							uni.$emit("refreshDynamic");
 						}
 					})
 				}
@@ -137,8 +88,8 @@
 						item.status="success";
 						item.message='';
 						item.url_=res.data[0]
-						
 						this.fileList.splice(index,1,item);
+						
 					}catch(e){
 						console.log(e)
 					}
@@ -153,14 +104,13 @@
 			uploadImgs(url){
 				return new Promise((_res,_rej)=>{
 					uni.uploadFile({
-						url:baseUrl+"/bangbang/task/img",
+						url:baseUrl+"/dynamic/imgs",
 						name:"files",
 						filePath:url,
 						header:{
 							Authorization: `Bearer ${this.$store.state.$token}`
 						},
 						success({data}){
-							console.log(data)
 							_res(JSON.parse(data))
 						},
 						fail(err){
@@ -175,7 +125,7 @@
 </script>
 
 <style lang="scss">
-	.createTask {
+	.createDynamic {
 		width: 690rpx;
 		margin: 0 auto;
 		margin-top: 40rpx;
