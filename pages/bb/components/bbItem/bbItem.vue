@@ -1,5 +1,5 @@
 <template>
-	<div class="bbItem">
+	<div class="bbItem" @click="toDetails">
 		<div class="userInfo">
 			<div class="username">{{bbItemInfo.user.userInfo.nickname}}</div>
 		</div>
@@ -8,15 +8,26 @@
 		</div>
 		<div class="info">
 			<div class="time">{{bbItemInfo.time}}</div>
-			<div class="money">¥{{bbItemInfo.money}}</div>
 			<div class="tag" v-if="bbItemInfo.tag">{{bbItemInfo.tag}}</div>
+			<div class="money">¥{{bbItemInfo.money}}</div>
 		</div>
 	</div>
 </template>
 
 <script>
 	export default {
-		props:["bbItemInfo"]
+		props:["bbItemInfo"],
+		methods:{
+			toDetails(){
+				uni.$bbId=this.bbItemInfo._id
+				uni.navigateTo({
+					url:"/pages/bb/pages/taskDetails/taskDetails",
+					fail(e){
+						console.log(e)
+					}
+				})
+			}
+		}
 	}
 </script>
 

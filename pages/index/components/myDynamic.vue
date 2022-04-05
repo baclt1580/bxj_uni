@@ -11,20 +11,24 @@
 						</div>
 						<div class="infoRight">
 							<div class="username">{{dynamic.user.userInfo.nickname}}</div>
-							<div class="time">{{dynamic.time}}</div>
+							<div class="time">{{dynamic.time|time}}</div>
 						</div>
-						
+						<div v-if="_isMyDynamic(dynamic)" class="menus" @click="showMenus(dynamic._id)" style="margin-left:auto;margin-right:50rpx;">
+							<u-icon name="list"  color="#06c2ad" size="28"></u-icon>
+						</div>
 					</div>
 					<!-- 内容 -->
 					<div class="content">
 						<u-read-more closeText="展开" :shadowStyle="{backgroundImage: 'none',paddingTop: '0',marginTop: '20rpx'}" textIndent="0" color="#06c2ad">
 						{{dynamic.content}}
 						</u-read-more>
-						<image :src="_img(img)" mode="widthFix" v-for="img in dynamic.images" :key="img" style="width:200rpx"></image>
+						<image :src="_img(img)" @click="preViewImg(dynamic.images,index)" mode="widthFix" v-for="(img,index) in dynamic.images" :key="img" style="width:200rpx;margin-right:20rpx"></image>
 					</div>
 					<!-- 菜单 -->
 					<div class="menus">
-						<image src="../assets/comment.png" mode="widthFix" style="width: 50rpx;" @click="showComment(dynamic._id)"></image>
+						<div class="showComment">
+							<image src="../assets/comment.png" mode="widthFix" style="width: 50rpx;" @click="showComment(dynamic._id)"></image>
+						</div>
 					</div>
 					<!-- 评论 -->
 					<div class="comments">
@@ -56,6 +60,11 @@
 					</div>
 					<u-line></u-line>
 				</div>
+				<u-empty
+						v-if="dynamics&&!dynamics.length",
+						mode="list"
+				>
+				</u-empty>
 				<u-loadmore status="loading" v-show="isShowLoading"/>
 		</scroll-view>
 		
@@ -78,7 +87,8 @@
 </template>
 
 <script>
-	import {createDynamic,getUserDynamics,getDynamic,createReply,getReply,getDynamicById} from "@/common/api.js";
+	import {createDynamic,getUserDynamics,getDynamic,createReply,getReply,getDynamicById,deleteDynamic} from "@/common/api.js";
+	import dayjs from "dayjs";
 	const dynamicPageSize=20;
 	const replyPageSize=8;
 	const commentPageSize=8;
@@ -179,6 +189,15 @@
 					this.$set(reply,"isShowAll",true)
 				}
 			},
+			//预览动态图片
+			preViewImg(images,current){
+				images=images.map(img=>this._img(img))
+				console.log(images)
+				uni.previewImage({
+					current,
+					urls:images
+				})
+			},
 			//刷新某个动态的评论
 			async _refreshReplys(id){
 				console.log("刷新评论",id)
@@ -205,6 +224,20 @@
 				})
 				uni.hideLoading()
 			},
+			showMenus(id){
+				console.log("删除")
+				uni.showActionSheet({
+					itemList:["删除该动态"],
+					itemColor:"#e74c3c",
+					success:async ({tapIndex})=>{
+						if(tapIndex==0){
+							let res=await deleteDynamic({id});
+							uni.$emit("refreshDynamic")
+							console.log(res)
+						}
+					}
+				})
+			},
 			//初始化动态列表
 			async _initData(){
 				console.log("initData")
@@ -230,7 +263,20 @@
 				
 			},
 			_img(str){
-				return "http://192.168.0.149:3000/"+str.split("/").slice(-3).join("/")
+				let arr=str.split("/");
+				let link
+				if(str.includes("http")){
+					 link="http://192.168.0.108:3000/"+arr.slice(-3).join("/");
+					
+				}else{
+					link="http://192.168.0.108:3000/"+str
+				}
+				console.log(link)
+				return link;
+			},
+			_isMyDynamic(dynamic){
+				let {user:{_id}}=dynamic;
+				return _id==this.$store.state.$userInfo._id;
 			}
 		},
 		filters: {
@@ -240,8 +286,8 @@
 				}
 				return content
 			},
-			img(str){
-				
+			time(time){
+				return dayjs(time).format("YYYY-MM-DD HH:mm:ss")
 			}
 		},
 		watch: {
@@ -267,6 +313,7 @@
 				.info{
 					height:120rpx;
 					display: flex;
+					// border:1px solid red;
 					.infoLeft{
 						.avatar{
 							image{

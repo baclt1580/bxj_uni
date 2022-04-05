@@ -1,6 +1,6 @@
 <template>
 	<div class="bbHeader">
-		<u-search placeholder="任务标题或任务标签名" v-model="searchStr"></u-search>
+		<u-search placeholder="任务标题或任务标签名" @clear="search" @custom="search" @search="search" v-model="searchStr"></u-search>
 		<div class="toMyTask" @click="toUserbb">我的</div>
 	</div>
 </template>
@@ -15,11 +15,14 @@
 		methods:{
 			toUserbb(){
 				uni.navigateTo({
-					url:"../../../../userbb/userbb",
+					url:"/pages/bb/pages/userbb/userbb",
 					fail(e){
 						console.log(e)
 					}
 				})
+			},
+			search(){
+				this.$emit("search",this.searchStr)
 			}
 		}
 		

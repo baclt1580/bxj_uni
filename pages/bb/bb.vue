@@ -1,7 +1,7 @@
 <template>
 	<!-- 帮帮任务列表 -->
 	<view class="bb">
-		<bbHeader></bbHeader>
+		<bbHeader @search="search"></bbHeader>
 		<div class="bbList" v-if="bbItemInfos">
 			<bbItem :bbItemInfo="bbItemInfo" v-for="bbItemInfo in bbItemInfos" :key="bbItemInfo._id"></bbItem>
 			<u-loadmore status="loading" v-show="showLoading" style="padding-top:30rpx;padding-bottom:30rpx;"/>
@@ -30,6 +30,7 @@
 			}
 			this.showLoading=true;
 			let res=await getTasks({
+				searchStr:this.searchStr||null,
 				pageSize:8,
 				page:++this.page
 			})
@@ -40,7 +41,8 @@
 			return {
 				bbItemInfos:null,
 				page:1,
-				showLoading:false
+				showLoading:false,
+				searchStr:""
 			}
 		},
 		methods: {
@@ -48,11 +50,21 @@
 				this.showLoading=true;
 				let res=await getTasks({
 					pageSize:8,
-					page:1
+					page:1,
+					searchStr:this.searchStr||null
 				})
-				console.log(res.length)
+				console.log(res)
 				this.showLoading=false;
 				this.bbItemInfos=res;
+			},
+			async search(v){
+				console.log("搜索")
+				this.searchStr=v;
+				uni.showLoading({
+					title:"正在加载"
+				})
+				await this.init()
+				uni.hideLoading()
 			}
 		},
 		components:{
@@ -66,15 +78,13 @@
 	.bb{
 		color:$fontColor;
 		background-color: #f5f5f5;
-		
 		padding-top:120rpx;
-		
+		min-height: 100vh;
 		.bbList{
 			
 			.bbItem{
 				margin:0 auto;
 				margin-top:20rpx;
-				
 			}
 		}
 	}
