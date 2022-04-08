@@ -45,6 +45,7 @@
 	import {baseUrl} from "@/common/config.js"
 	import {delEmpty} from "@/util/utils.js"
 	export default {
+		
 		data() {
 			return {
 				formContent: {
@@ -114,9 +115,9 @@
 					})
 					return;
 				}
-				let res = await createTask(obj);
-				uni.$emit("refreshbb");
+				let res = await createTask(obj);	
 				if(res){
+					uni.$emit("refreshbb");
 					uni.navigateBack({
 						complete(){
 							uni.showToast({

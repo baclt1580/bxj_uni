@@ -8773,7 +8773,26 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("v-uni-view", { attrs: { _i: 0 } }, [_vm._v("user")])
+  return _c(
+    "v-uni-view",
+    { attrs: { _i: 0 } },
+    [
+      _vm._v("user"),
+      _c(
+        "v-uni-button",
+        {
+          attrs: { _i: 1 },
+          on: {
+            click: function($event) {
+              return _vm.$handleViewEvent($event)
+            }
+          }
+        },
+        [_vm._v("切换账号")]
+      )
+    ],
+    1
+  )
 }
 var recyclableRender = false
 var staticRenderFns = []
@@ -10736,33 +10755,55 @@ var render = function() {
           _c("div", { staticClass: _vm._$g(11, "sc"), attrs: { _i: 11 } }, [
             _vm._v(_vm._$g(11, "t0-0"))
           ]),
-          _c("u-line", { attrs: { _i: 12 } }),
+          _c(
+            "waterfall",
+            { staticClass: _vm._$g(12, "sc"), attrs: { _i: 12 } },
+            _vm._l(_vm._$g(13, "f"), function(item, $10, $20, $30) {
+              return _c(
+                "cell",
+                { key: item, attrs: { _i: "13-" + $30 } },
+                [
+                  _c("v-uni-image", {
+                    staticClass: _vm._$g("14-" + $30, "sc"),
+                    attrs: {
+                      src: _vm._$g("14-" + $30, "a-src"),
+                      mode: "widthFix",
+                      _i: "14-" + $30
+                    }
+                  })
+                ],
+                1
+              )
+            }),
+            1
+          ),
+          _c("u-line", { attrs: { _i: 15 } }),
           _c(
             "div",
-            { staticClass: _vm._$g(13, "sc"), attrs: { _i: 13 } },
+            { staticClass: _vm._$g(16, "sc"), attrs: { _i: 16 } },
             [
               _c(
                 "div",
-                { staticClass: _vm._$g(14, "sc"), attrs: { _i: 14 } },
+                { staticClass: _vm._$g(17, "sc"), attrs: { _i: 17 } },
                 [
                   _vm._v("赏金:"),
                   _c(
                     "span",
-                    { staticClass: _vm._$g(15, "sc"), attrs: { _i: 15 } },
-                    [_vm._v(_vm._$g(15, "t0-0") + "元")]
+                    { staticClass: _vm._$g(18, "sc"), attrs: { _i: 18 } },
+                    [_vm._v(_vm._$g(18, "t0-0") + "元")]
                   )
                 ],
                 1
               ),
               _c(
                 "div",
-                { staticClass: _vm._$g(16, "sc"), attrs: { _i: 16 } },
+                { staticClass: _vm._$g(19, "sc"), attrs: { _i: 19 } },
                 [
                   _vm._v("任务状态:"),
                   _c(
                     "span",
-                    { staticClass: _vm._$g(17, "sc"), attrs: { _i: 17 } },
-                    [_vm._v(_vm._$g(17, "t0-0"))]
+                    { staticClass: _vm._$g(20, "sc"), attrs: { _i: 20 } },
+                    [_vm._v(_vm._$g(20, "t0-0"))]
                   )
                 ],
                 1
@@ -10772,45 +10813,8 @@ var render = function() {
           ),
           _c(
             "div",
-            { staticClass: _vm._$g(18, "sc"), attrs: { _i: 18 } },
+            { staticClass: _vm._$g(21, "sc"), attrs: { _i: 21 } },
             [
-              _vm._$g(19, "i")
-                ? _c(
-                    "div",
-                    {
-                      staticClass: _vm._$g(19, "sc"),
-                      attrs: { _i: 19 },
-                      on: {
-                        click: function($event) {
-                          return _vm.$handleViewEvent($event)
-                        }
-                      }
-                    },
-                    [_vm._v("接收该任务")]
-                  )
-                : _vm._e(),
-              _vm._$g(20, "i")
-                ? _c(
-                    "div",
-                    {
-                      staticClass: _vm._$g(20, "sc"),
-                      attrs: { _i: 20 },
-                      on: {
-                        click: function($event) {
-                          return _vm.$handleViewEvent($event)
-                        }
-                      }
-                    },
-                    [_vm._v("确认完成")]
-                  )
-                : _vm._e(),
-              _vm._$g(21, "i")
-                ? _c(
-                    "div",
-                    { staticClass: _vm._$g(21, "sc"), attrs: { _i: 21 } },
-                    [_vm._v("确认完成")]
-                  )
-                : _vm._e(),
               _vm._$g(22, "i")
                 ? _c(
                     "div",
@@ -10823,7 +10827,7 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("取消接受")]
+                    [_vm._v("接收该任务")]
                   )
                 : _vm._e(),
               _vm._$g(23, "i")
@@ -10838,13 +10842,58 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("取消确认")]
+                    [_vm._v("确认完成")]
                   )
                 : _vm._e(),
               _vm._$g(24, "i")
                 ? _c(
                     "div",
-                    { staticClass: _vm._$g(24, "sc"), attrs: { _i: 24 } },
+                    {
+                      staticClass: _vm._$g(24, "sc"),
+                      attrs: { _i: 24 },
+                      on: {
+                        click: function($event) {
+                          return _vm.$handleViewEvent($event)
+                        }
+                      }
+                    },
+                    [_vm._v("确认完成")]
+                  )
+                : _vm._e(),
+              _vm._$g(25, "i")
+                ? _c(
+                    "div",
+                    {
+                      staticClass: _vm._$g(25, "sc"),
+                      attrs: { _i: 25 },
+                      on: {
+                        click: function($event) {
+                          return _vm.$handleViewEvent($event)
+                        }
+                      }
+                    },
+                    [_vm._v("取消接受")]
+                  )
+                : _vm._e(),
+              _vm._$g(26, "i")
+                ? _c(
+                    "div",
+                    {
+                      staticClass: _vm._$g(26, "sc"),
+                      attrs: { _i: 26 },
+                      on: {
+                        click: function($event) {
+                          return _vm.$handleViewEvent($event)
+                        }
+                      }
+                    },
+                    [_vm._v("取消确认")]
+                  )
+                : _vm._e(),
+              _vm._$g(27, "i")
+                ? _c(
+                    "div",
+                    { staticClass: _vm._$g(27, "sc"), attrs: { _i: 27 } },
                     [_vm._v("拒绝确认")]
                   )
                 : _vm._e()
@@ -10944,7 +10993,7 @@ if(false) {}
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ./node_modules/css-loader/dist/runtime/api.js */ 22);
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, "@charset \"UTF-8\";\r\n/**\r\n * 下方引入的为uView UI的集成样式文件，为scss预处理器，其中包含了一些\"u-\"开头的自定义变量\r\n * 使用的时候，请将下面的一行复制到您的uniapp项目根目录的uni.scss中即可\r\n * uView自定义的css类名和scss变量，均以\"u-\"开头，不会造成冲突，请放心使用 \r\n */\n.taskDetails {\r\n  padding: 0 20rpx;\r\n  padding-top: 30rpx;\n}\n.taskDetails .info {\r\n  height: 120rpx;\r\n  display: flex;\n}\n.taskDetails .info .infoLeft .avatar uni-image {\r\n  width: 100rpx;\r\n  border-radius: 50%;\n}\n.taskDetails .info .infoRight {\r\n  height: 120rpx;\r\n  display: flex;\r\n  justify-content: center;\r\n  flex-direction: column;\r\n  margin-left: 20rpx;\n}\n.taskDetails .info .infoRight .username {\r\n  color: #06c2ad;\r\n  margin-bottom: 20rpx;\n}\n.taskDetails .info .infoRight .time {\r\n  color: #BBBCBE;\r\n  font-size: 24rpx;\n}\n.taskDetails .title {\r\n  font-size: 36rpx;\r\n  text-align: center;\r\n  margin-bottom: 20rpx;\n}\n.taskDetails .content {\r\n  line-height: 1.4em;\r\n  padding-bottom: 20rpx;\r\n  margin: 30rpx 0;\r\n  font-size: 32rpx;\n}\n.taskDetails .taskInfo {\r\n  margin-top: 30rpx;\n}\n.taskDetails .taskInfo .item {\r\n  margin-bottom: 20rpx;\n}\n.taskDetails .taskInfo .item.money .highLight {\r\n  color: #06c2ad;\r\n  font-size: 32rpx;\n}\n.taskDetails .taskInfo .item.status .highLight {\r\n  color: #06c2ad;\r\n  font-size: 32rpx;\n}\n.taskDetails .todos {\r\n  margin-top: 30rpx;\n}\n.taskDetails .todos .do {\r\n  width: 90%;\r\n  margin: 0 auto;\r\n  height: 80rpx;\r\n  border-radius: 8rpx;\r\n  color: #fff;\r\n  font-size: 32rpx;\r\n  margin-bottom: 30rpx;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  background-color: #06c2ad;\n}\n.taskDetails .todos .do.recive {\r\n  background-color: #06c2ad;\n}\n.taskDetails .todos .do.reciverConfirm, .taskDetails .todos .do.senderConfirm {\r\n  background-color: #27ae60;\n}\n.taskDetails .todos .do.reciverCancelRecive, .taskDetails .todos .do.reciverCancelConfirm, .taskDetails .todos .do.senderRejectConfirm {\r\n  background-color: #e74c3c;\n}\r\n", ""]);
+exports.push([module.i, "@charset \"UTF-8\";\r\n/**\r\n * 下方引入的为uView UI的集成样式文件，为scss预处理器，其中包含了一些\"u-\"开头的自定义变量\r\n * 使用的时候，请将下面的一行复制到您的uniapp项目根目录的uni.scss中即可\r\n * uView自定义的css类名和scss变量，均以\"u-\"开头，不会造成冲突，请放心使用 \r\n */\n.taskDetails {\r\n  padding: 0 20rpx;\r\n  padding-top: 30rpx;\n}\n.taskDetails .info {\r\n  height: 120rpx;\r\n  display: flex;\n}\n.taskDetails .info .infoLeft .avatar uni-image {\r\n  width: 100rpx;\r\n  border-radius: 50%;\n}\n.taskDetails .info .infoRight {\r\n  height: 120rpx;\r\n  display: flex;\r\n  justify-content: center;\r\n  flex-direction: column;\r\n  margin-left: 20rpx;\n}\n.taskDetails .info .infoRight .username {\r\n  color: #06c2ad;\r\n  margin-bottom: 20rpx;\n}\n.taskDetails .info .infoRight .time {\r\n  color: #BBBCBE;\r\n  font-size: 24rpx;\n}\n.taskDetails .title {\r\n  font-size: 36rpx;\r\n  text-align: center;\r\n  margin-bottom: 20rpx;\n}\n.taskDetails .content {\r\n  line-height: 1.4em;\r\n  padding-bottom: 20rpx;\r\n  margin: 30rpx 0;\r\n  font-size: 32rpx;\n}\n.taskDetails .imgs .img {\r\n  width: 230rpx;\r\n  margin-right: 20rpx;\r\n  margin-bottom: 20rpx;\n}\n.taskDetails .imgs .img:last-child {\r\n  margin-right: 0;\n}\n.taskDetails .taskInfo {\r\n  margin-top: 30rpx;\n}\n.taskDetails .taskInfo .item {\r\n  margin-bottom: 20rpx;\n}\n.taskDetails .taskInfo .item.money .highLight {\r\n  color: #06c2ad;\r\n  font-size: 32rpx;\n}\n.taskDetails .taskInfo .item.status .highLight {\r\n  color: #06c2ad;\r\n  font-size: 32rpx;\n}\n.taskDetails .todos {\r\n  margin-top: 30rpx;\n}\n.taskDetails .todos .do {\r\n  width: 90%;\r\n  margin: 0 auto;\r\n  height: 80rpx;\r\n  border-radius: 8rpx;\r\n  color: #fff;\r\n  font-size: 32rpx;\r\n  margin-bottom: 30rpx;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  background-color: #06c2ad;\n}\n.taskDetails .todos .do.recive {\r\n  background-color: #06c2ad;\n}\n.taskDetails .todos .do.reciverConfirm, .taskDetails .todos .do.senderConfirm {\r\n  background-color: #27ae60;\n}\n.taskDetails .todos .do.reciverCancelRecive, .taskDetails .todos .do.reciverCancelConfirm, .taskDetails .todos .do.senderRejectConfirm {\r\n  background-color: #e74c3c;\n}\r\n", ""]);
 // Exports
 module.exports = exports;
 

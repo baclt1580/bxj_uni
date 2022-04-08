@@ -16,6 +16,7 @@
 	
 	export default {
 		async created() {
+			console.log(this.config)
 			await this.init()
 			uni.$on("refreshbb",this.init)
 		},

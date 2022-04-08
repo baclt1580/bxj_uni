@@ -21,6 +21,11 @@
 		<div class="content">
 			{{bbItemInfo.content}}
 		</div>
+		<waterfall class="imgs" column-width="230rpx">
+			<cell v-for="item in bbItemInfo.imgs">
+				<image  :src="config.assetsBaseUrl+item" mode="widthFix" class="img"></image>
+			</cell>
+		</waterfall>
 		<u-line></u-line>
 		<div class="taskInfo">
 			<div class="item money">
@@ -39,7 +44,7 @@
 				确认完成
 			</div>
 			<!-- 发布者确认完成 -->
-			<div class="do senderConfirm" v-if="rules.senderConfirm">
+			<div class="do senderConfirm" v-if="rules.senderConfirm" @click="senderConfirm">
 				确认完成
 			</div>
 			<div class="do reciverCancelRecive" v-if="rules.reciverCancelRecive" @click="reciverCancelRecive">
@@ -59,7 +64,7 @@
 
 <script>
 	import dayjs from "dayjs"
-	import {getTaskById,receiveTask,receiverConfirm,senderConfirm,reciverCancelRecive,reciverCancelConfirm,rejectComplete} from "@/common/bbApis/bbApis"
+	import {getTaskById,receiveTask,receiverConfirm,senderConfirm,reciverCancelRecive,reciverCancelConfirm,rejectComplete,deleteTask} from "@/common/bbApis/bbApis"
 	export default {
 		async created(){
 			let id=uni.$bbId
@@ -79,16 +84,25 @@
 			}
 		},
 		methods: {
-			showMenus(id){
+			showMenus(){
 				console.log("删除")
 				uni.showActionSheet({
-					itemList:["删除该动态"],
+					itemList:["删除该任务"],
 					itemColor:"#e74c3c",
 					success:async ({tapIndex})=>{
 						if(tapIndex==0){
-							let res=await deleteDynamic({id});
-							uni.$emit("refreshDynamic")
-							console.log(res)
+							let res=await deleteTask({id:this.bbItemInfo._id});
+							uni.$emit("refreshbb")
+							if(res){
+								uni.navigateBack({
+									success(){
+										uni.showToast({
+											title:"删除成功",
+											duration:800
+										})
+									}
+								})
+							}
 						}
 					}
 				})
@@ -136,8 +150,15 @@
 				})
 			
 			},
-			senderConfirm(){
-				let res=senderConfirm()
+			async senderConfirm(){
+				let res=await senderConfirm({id:this.bbItemInfo._id})
+				if(res){
+					uni.showToast({
+						title:"已确认完成",
+						duration:800
+					})
+					await this._refreshInfo()
+				}
 			},
 			async reciverCancelRecive(){
 				uni.showLoading({
@@ -288,7 +309,19 @@
 			padding-bottom: 20rpx;
 			margin:30rpx 0;
 			font-size: 32rpx;
+			
 		}
+		.imgs{
+			.img{
+				width:230rpx;
+				margin-right:20rpx;
+				margin-bottom:20rpx;
+				&:last-child{
+					margin-right: 0;
+				}
+			}
+		}
+		
 		.taskInfo{
 			margin-top: 30rpx;
 			.item{

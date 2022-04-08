@@ -1,6 +1,7 @@
 <template>
 	<view>
 		user
+		<button @click="changeAccount">切换账号</button>
 	</view>
 </template>
 
@@ -12,7 +13,11 @@
 			}
 		},
 		methods: {
-			
+			changeAccount(){
+				uni.navigateTo({
+					url:"../login/login"
+				})
+			}
 		}
 	}
 </script>
